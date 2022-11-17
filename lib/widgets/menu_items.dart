@@ -17,7 +17,7 @@ class MenuItems extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.05,
-        vertical: 20.h,
+        vertical: 15.h,
       ),
       child: GestureDetector(
         onTap: function,

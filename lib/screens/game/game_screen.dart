@@ -359,7 +359,7 @@ class _GameScreenState extends State<GameScreen>
                   Center(
                     child: GameEndWidget(
                       onPlayTap: () => resetGame(),
-                      onMenuTap: () {},
+                      onMenuTap: null,
                     ),
                   ),
                 if (totalItems.length == listOfItems.length)

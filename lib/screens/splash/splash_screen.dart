@@ -172,50 +172,52 @@ class _SplashScreenState extends State<SplashScreen>
                 },
               ),
               // SizedBox(height: 20.h),
-              Align(
+              Flexible(
+                child: Align(
                 alignment: Alignment.bottomCenter,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(-0.5, 0.1),
-                          end: const Offset(0.5, 0.1),
-                        ).animate(_animationController),
-                        child: Image(
-                          height: 50.h,
-                          width: 50.w,
-                          image: (_animationController.value < 1)
-                              ? const AssetImage(
-                                  'assets/gifs/itachi_loading.gif')
-                              : const AssetImage('assets/images/itachi.png'),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(-0.5, 0.1),
+                            end: const Offset(0.5, 0.1),
+                          ).animate(_animationController),
+                          child: Image(
+                            height: 50.h,
+                            width: 50.w,
+                            image: (_animationController.value < 1)
+                                ? const AssetImage(
+                                    'assets/gifs/itachi_loading.gif')
+                                : const AssetImage('assets/images/itachi.png'),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 5.h),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: LinearProgressIndicator(
-                        value: _animationController.value,
-                        minHeight: 10.h,
-                        backgroundColor: Colors.white,
-                        color: Theme.of(context).backgroundColor,
+                      SizedBox(height: 5.h),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: LinearProgressIndicator(
+                          value: _animationController.value,
+                          minHeight: 10.h,
+                          backgroundColor: Colors.white,
+                          color: Theme.of(context).backgroundColor,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 5.h),
-                    Text(
-                      (_animationController.value < 1)
-                          ? 'Loading..'
-                          : 'Completed',
-                      style: TextStyle(
-                        fontSize: 18.sp,
+                      SizedBox(height: 5.h),
+                      Text(
+                        (_animationController.value < 1)
+                            ? 'Loading..'
+                            : 'Completed',
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 5.h),
-                  ],
+                      SizedBox(height: 5.h),
+                    ],
+                  ),
                 ),
               ),
             ],

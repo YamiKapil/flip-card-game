@@ -32,7 +32,7 @@ class _MenuScreenState extends State<MenuScreen>
     player.setReleaseMode(ReleaseMode.loop);
     player.setVolume(0.3);
     player2.setVolume(0.3);
-    playBgm();
+    // playBgm();
     super.initState();
   }
 
@@ -79,7 +79,7 @@ class _MenuScreenState extends State<MenuScreen>
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).padding.top,
+                  // vertical: MediaQuery.of(context).padding.top,
                   horizontal: 20.w,
                 ),
                 child: Align(
@@ -102,7 +102,7 @@ class _MenuScreenState extends State<MenuScreen>
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.w,
-                  vertical: 20.h,
+                  vertical: 10.h,
                 ),
                 child: Center(
                   child: ValueListenableBuilder(

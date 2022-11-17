@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flip_game/screens/game/game_screen_com.dart';
 import 'package:flip_game/screens/menu/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,6 +36,21 @@ class MainMenuScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => PlayerSelectionScreen(
                     player: player,
+                    bgm: bgm,
+                  ),
+                ),
+              );
+            },
+          ),
+          MenuItems(
+            icon: Icons.play_arrow_rounded,
+            text: 'Play With Com',
+            function: () {
+              player.play(AssetSource(clickSound));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => GameScreenCom(
+                    players: 2,
                     bgm: bgm,
                   ),
                 ),

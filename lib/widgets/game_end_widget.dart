@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'menu_items.dart';
 
 class GameEndWidget extends StatelessWidget {
-  final VoidCallback? onMenuTap;
+  final Widget? onMenuTap;
   final VoidCallback? onPlayTap;
   const GameEndWidget({super.key, this.onMenuTap, this.onPlayTap});
 
@@ -69,7 +69,9 @@ class GameEndWidget extends StatelessWidget {
           MenuItems(
             icon: Icons.menu,
             text: 'Main Menu',
-            function: onMenuTap,
+            function: () => Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => onMenuTap!),
+                (route) => false),
           ),
         ],
       ),
