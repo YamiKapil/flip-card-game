@@ -32,7 +32,7 @@ class _MenuScreenState extends State<MenuScreen>
     player.setReleaseMode(ReleaseMode.loop);
     player.setVolume(0.3);
     player2.setVolume(0.3);
-    // playBgm();
+    playBgm();
     super.initState();
   }
 

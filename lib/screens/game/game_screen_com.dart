@@ -9,12 +9,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/constants.dart';
 import '../../widgets/flip_animation.dart';
 import '../../widgets/game_end_widget.dart';
+import '../../widgets/menu_items.dart';
 import '../../widgets/player_widget.dart';
 
 extension RandomListItem<T> on List<T> {
   T randomItem() {
     return this[math.Random().nextInt(length)];
   }
+}
+
+enum GameMode {
+  easy,
+  intermediate,
+  extreme,
 }
 
 class GameScreenCom extends StatefulWidget {
@@ -45,6 +52,7 @@ class _GameScreenComState extends State<GameScreenCom>
   bool comTurn = false;
   // List<FlipController> compFlipController = [];
   Set comMemory = {};
+  GameMode? gameMode;
 
   @override
   void initState() {
@@ -76,123 +84,147 @@ class _GameScreenComState extends State<GameScreenCom>
     secondIndex = random.nextInt(flipController.length);
   }
 
+  hardMode() {
+    if (!comMemory.contains(firstIndex) && !totalItems.contains(firstIndex)) {
+      comMemory.add(firstIndex);
+    } else if (!comMemory.contains(secondIndex) &&
+        !totalItems.contains(secondIndex)) {
+      comMemory.add(secondIndex);
+    }
+  }
+
   comTurnStart() async {
     await getRandomIndex();
-    if (firstIndex == secondIndex) {
-      await getRandomIndex();
-    }
-    late int nextFirstIndex;
-    late int nextSecondIndex;
-    if (comMemory.length > 2) {
-      outerLoop:
-      for (int i = 0; i < comMemory.length; i++) {
-        for (int j = i + 1; j < comMemory.length; j++) {
-          log((images[comMemory.elementAt(i)]).toString(),
-              name: 'com turn img i');
-          log((images[comMemory.elementAt(j)]).toString(),
-              name: 'com turn img j');
-          if (images[comMemory.elementAt(i)] ==
-              images[comMemory.elementAt(j)]) {
-            nextFirstIndex = comMemory.elementAt(i);
-            nextSecondIndex = comMemory.elementAt(j);
-            break outerLoop;
-          } else {
-            nextFirstIndex = firstIndex;
-            nextSecondIndex = secondIndex;
-          }
-        }
-      }
-    } else {
-      nextFirstIndex = firstIndex;
-      nextSecondIndex = secondIndex;
-    }
-    // compFlipController.shuffle();
-    // final firstIndex = compFlipController.indexOf((compFlipController).first);
-    log(firstIndex.toString(), name: 'com turn first index');
-    log(nextFirstIndex.toString(), name: 'com turn first next index');
-    // final secondIndex = compFlipController.indexOf((compFlipController).last);
-    log(secondIndex.toString(), name: 'com turn second index');
-    log(nextSecondIndex.toString(), name: 'com turn second next index');
-    log(totalItems.toString(), name: 'not com turn total items');
-
-    if (twoTaps.length < 2 &&
-        !totalItems.contains(nextFirstIndex) &&
-        !totalItems.contains(nextSecondIndex)) {
-      await Future.delayed(
-        const Duration(milliseconds: 800),
-        () async {
-          flipController[nextFirstIndex].flip();
-          twoTaps.add(nextFirstIndex);
-          totalItems.add(nextFirstIndex);
-          twoTapsElement.add(listOfItems[nextFirstIndex]);
-          await Future.delayed(const Duration(milliseconds: 500), () async {
-            flipController[nextSecondIndex].flip();
-            twoTaps.add(nextSecondIndex);
-            totalItems.add(nextSecondIndex);
-            twoTapsElement.add(listOfItems[nextSecondIndex]);
-          }).then((value) async {
-            if (twoTaps.length == 2) {
-              if (twoTapsElement[0] == twoTapsElement[1]) {
-                // compFlipController.removeAt(firstIndex);
-                // compFlipController.removeAt(secondIndex);
-                if (comMemory.contains(nextFirstIndex) &&
-                    comMemory.contains(nextSecondIndex)) {
-                  comMemory.remove(nextFirstIndex);
-                  comMemory.remove(nextSecondIndex);
-                }
-                if (player == numberOfPlayers[1]) {
-                  setState(() {
-                    comScore++;
-                  });
-                }
-                if (listOfItems.length != totalItems.length) {
-                  twoTaps.clear();
-                  twoTapsElement.clear();
-                  setState(() {});
-                } else {
-                  setState(() {
-                    comTurn = false;
-                    gameStarted = false;
-                  });
-                }
+    // if (firstIndex == secondIndex) {
+    //   await getRandomIndex();
+    // }
+    if (firstIndex != secondIndex) {
+      // extreme mode
+      if (gameMode == GameMode.extreme) hardMode();
+      //extreme mode end
+      late int nextFirstIndex;
+      late int nextSecondIndex;
+      //intermediate mode
+      if (gameMode == GameMode.intermediate || gameMode == GameMode.extreme) {
+        if (comMemory.length > 2) {
+          outerLoop:
+          for (int i = 0; i < comMemory.length; i++) {
+            for (int j = i + 1; j < comMemory.length; j++) {
+              log((images[comMemory.elementAt(i)]).toString(),
+                  name: 'com turn img i');
+              log((images[comMemory.elementAt(j)]).toString(),
+                  name: 'com turn img j');
+              if (images[comMemory.elementAt(i)] ==
+                  images[comMemory.elementAt(j)]) {
+                nextFirstIndex = comMemory.elementAt(i);
+                nextSecondIndex = comMemory.elementAt(j);
+                break outerLoop;
               } else {
-                comMemory.add(nextFirstIndex);
-                comMemory.add(nextSecondIndex);
-                await Future.delayed(const Duration(milliseconds: 800)).then(
-                  (value) {
-                    flipController[twoTaps[0]].flip();
-                    flipController[twoTaps[1]].flip();
-                    totalItems.remove(twoTaps[0]);
-                    totalItems.remove(twoTaps[1]);
-                    if (player < numberOfPlayers.length - 1) {
-                      setState(() {
-                        player++;
-                        colorAnimation.value = 0;
-                        gameStarted = true;
-                        comTurn = false;
-                      });
-                    } else {
-                      setState(() {
-                        player = numberOfPlayers[0];
-                        colorAnimation.value = 0;
-                        comTurn = false;
-                      });
-                    }
-                    twoTaps.clear();
-                    twoTapsElement.clear();
-                  },
-                );
+                nextFirstIndex = firstIndex;
+                nextSecondIndex = secondIndex;
               }
             }
-          });
-        },
-      );
-    } else if (totalItems.contains(nextFirstIndex) ||
-        totalItems.contains(nextSecondIndex)) {
-      comTurnStart();
+          }
+        } else {
+          nextFirstIndex = firstIndex;
+          nextSecondIndex = secondIndex;
+        }
+      }
+      // intermediate mode end
+      if (gameMode == GameMode.easy) {
+        nextFirstIndex = firstIndex;
+        nextSecondIndex = secondIndex;
+      }
+      // compFlipController.shuffle();
+      // final firstIndex = compFlipController.indexOf((compFlipController).first);
+      log(firstIndex.toString(), name: 'com turn first index');
+      log(nextFirstIndex.toString(), name: 'com turn first next index');
+      // final secondIndex = compFlipController.indexOf((compFlipController).last);
+      log(secondIndex.toString(), name: 'com turn second index');
+      log(nextSecondIndex.toString(), name: 'com turn second next index');
+      log(totalItems.toString(), name: 'not com turn total items');
+
+      if (twoTaps.length < 2 &&
+          !totalItems.contains(nextFirstIndex) &&
+          !totalItems.contains(nextSecondIndex)) {
+        await Future.delayed(
+          const Duration(milliseconds: 800),
+          () async {
+            flipController[nextFirstIndex].flip();
+            twoTaps.add(nextFirstIndex);
+            totalItems.add(nextFirstIndex);
+            twoTapsElement.add(listOfItems[nextFirstIndex]);
+            await Future.delayed(const Duration(milliseconds: 500), () async {
+              flipController[nextSecondIndex].flip();
+              twoTaps.add(nextSecondIndex);
+              totalItems.add(nextSecondIndex);
+              twoTapsElement.add(listOfItems[nextSecondIndex]);
+            }).then((value) async {
+              if (twoTaps.length == 2) {
+                if (twoTapsElement[0] == twoTapsElement[1]) {
+                  // compFlipController.removeAt(firstIndex);
+                  // compFlipController.removeAt(secondIndex);
+                  if (comMemory.contains(nextFirstIndex) &&
+                      comMemory.contains(nextSecondIndex)) {
+                    comMemory.remove(nextFirstIndex);
+                    comMemory.remove(nextSecondIndex);
+                  }
+                  if (player == numberOfPlayers[1]) {
+                    setState(() {
+                      comScore++;
+                    });
+                  }
+                  if (listOfItems.length != totalItems.length) {
+                    twoTaps.clear();
+                    twoTapsElement.clear();
+                    setState(() {});
+                  } else {
+                    setState(() {
+                      comTurn = false;
+                      gameStarted = false;
+                    });
+                  }
+                } else {
+                  comMemory.add(nextFirstIndex);
+                  comMemory.add(nextSecondIndex);
+                  await Future.delayed(const Duration(milliseconds: 800)).then(
+                    (value) {
+                      flipController[twoTaps[0]].flip();
+                      flipController[twoTaps[1]].flip();
+                      totalItems.remove(twoTaps[0]);
+                      totalItems.remove(twoTaps[1]);
+                      if (player < numberOfPlayers.length - 1) {
+                        setState(() {
+                          player++;
+                          colorAnimation.value = 0;
+                          gameStarted = true;
+                          comTurn = false;
+                        });
+                      } else {
+                        setState(() {
+                          player = numberOfPlayers[0];
+                          colorAnimation.value = 0;
+                          comTurn = false;
+                        });
+                      }
+                      twoTaps.clear();
+                      twoTapsElement.clear();
+                    },
+                  );
+                }
+              }
+            });
+          },
+        );
+      } else if (totalItems.contains(nextFirstIndex) ||
+          totalItems.contains(nextSecondIndex)) {
+        comTurnStart();
+      } else {
+        // setState(() {});
+        // comTurnStart();
+      }
     } else {
-      // setState(() {});
-      // comTurnStart();
+      comTurnStart();
     }
   }
 
@@ -239,6 +271,7 @@ class _GameScreenComState extends State<GameScreenCom>
       totalItems.clear();
       gameStarted = false;
       comMemory.clear();
+      gameMode = null;
     });
   }
 
@@ -475,6 +508,66 @@ class _GameScreenComState extends State<GameScreenCom>
                     score: player1Score,
                   ),
                 ),
+                //player
+                Padding(
+                  padding: EdgeInsets.only(top: 50.h),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'P',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'L',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'A',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Y',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'E',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'R',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: PlayerWidget(
@@ -482,6 +575,83 @@ class _GameScreenComState extends State<GameScreenCom>
                     score: comScore,
                   ),
                 ),
+                // computer
+                Padding(
+                  padding: EdgeInsets.only(bottom: 50.h),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'C',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'O',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'M',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'P',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'U',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'T',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'E',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'R',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (gameMode != null)
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: GestureDetector(
@@ -496,6 +666,65 @@ class _GameScreenComState extends State<GameScreenCom>
                     ),
                   ),
                 ),
+                // game mode
+                if (gameMode == null)
+                  Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil.defaultSize.width * 0.6,
+                        vertical: ScreenUtil.defaultSize.width * 0.1,
+                      ),
+                      child: Container(
+                        color: Colors.black.withOpacity(0.6),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              MenuItems(
+                                icon: Icons.minimize_rounded,
+                                text: 'Easy',
+                                function: () {
+                                  setState(() {
+                                    gameMode = GameMode.easy;
+                                  });
+                                },
+                              ),
+                              MenuItems(
+                                icon: Icons.drag_handle_sharp,
+                                text: 'Intermediate',
+                                function: () {
+                                  setState(() {
+                                    gameMode = GameMode.intermediate;
+                                  });
+                                },
+                              ),
+                              MenuItems(
+                                icon: Icons.density_medium_rounded,
+                                text: 'Extreme',
+                                function: () {
+                                  setState(() {
+                                    gameMode = GameMode.extreme;
+                                  });
+                                },
+                              ),
+                              MenuItems(
+                                icon: Icons.arrow_back_rounded,
+                                text: 'Go Back',
+                                function: () {
+                                  Navigator.of(context).pop();
+                                  widget.bgm.play(AssetSource(narutoBgm));
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
