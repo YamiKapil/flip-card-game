@@ -277,7 +277,7 @@ class _GameScreenComState extends State<GameScreenCom>
 
   @override
   void dispose() {
-    flipController.map((e) => e.dispose());
+    flipController.map((e) => e.dispose()).toList();
     colorAnimation.dispose();
     super.dispose();
   }
@@ -652,20 +652,20 @@ class _GameScreenComState extends State<GameScreenCom>
                   ),
                 ),
                 if (gameMode != null)
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: GestureDetector(
-                    onLongPress: () {
-                      Navigator.of(context).pop();
-                      widget.bgm.play(AssetSource(narutoBgm));
-                    },
-                    child: Icon(
-                      Icons.home,
-                      color: Colors.white,
-                      size: 25.w,
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: GestureDetector(
+                      onLongPress: () {
+                        Navigator.of(context).pop();
+                        widget.bgm.play(AssetSource(narutoBgm));
+                      },
+                      child: Icon(
+                        Icons.home,
+                        color: Colors.white,
+                        size: 25.w,
+                      ),
                     ),
                   ),
-                ),
                 // game mode
                 if (gameMode == null)
                   Container(

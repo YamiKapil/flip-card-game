@@ -14,11 +14,7 @@ import '../../widgets/player_widget.dart';
 class GameScreen extends StatefulWidget {
   final int players;
   final AudioPlayer bgm;
-  const GameScreen({
-    super.key,
-    required this.players,
-    required this.bgm
-  });
+  const GameScreen({super.key, required this.players, required this.bgm});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -113,7 +109,9 @@ class _GameScreenState extends State<GameScreen>
 
   @override
   void dispose() {
-    flipController.map((e) => e.dispose());
+    flipController.map((e) {
+      e.dispose();
+    }).toList();
     colorAnimation.dispose();
     super.dispose();
   }
@@ -213,10 +211,7 @@ class _GameScreenState extends State<GameScreen>
                                   if (twoTaps.length < 2 &&
                                       !totalItems.contains(index)) {
                                     flipController[index].flip();
-                                    log(
-                                        flipController[index]
-                                            .value
-                                            .toString(),
+                                    log(flipController[index].value.toString(),
                                         name: 'flipedd');
                                     twoTaps.add(index);
                                     totalItems.add(index);
@@ -300,13 +295,11 @@ class _GameScreenState extends State<GameScreen>
                                   firstChild: Container(
                                     padding: EdgeInsets.all(4.w),
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(40.r),
+                                      borderRadius: BorderRadius.circular(40.r),
                                       color: Colors.white,
                                     ),
                                     child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(40.r),
+                                      borderRadius: BorderRadius.circular(40.r),
                                       child: Image.asset(
                                           'assets/images/card_bg.jpg'),
                                     ),
@@ -325,22 +318,18 @@ class _GameScreenState extends State<GameScreen>
                                   secondChild: Container(
                                     padding: EdgeInsets.all(5.w),
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(40.r),
+                                      borderRadius: BorderRadius.circular(40.r),
                                       color: Colors.white,
                                     ),
                                     child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(40.r),
+                                      borderRadius: BorderRadius.circular(40.r),
                                       child: Container(
                                         decoration: BoxDecoration(
                                             image: DecorationImage(
-                                          image: AssetImage(
-                                            images[index],
-                                            
-                                          ),
-                                          fit: BoxFit.cover
-                                        )),
+                                                image: AssetImage(
+                                                  images[index],
+                                                ),
+                                                fit: BoxFit.cover)),
                                         // child: Image.asset(
                                         //   images[index],
                                         //   fit: BoxFit.fitWidth,
